@@ -7,7 +7,9 @@
 typedef struct{
   int member1;
   int member2;
-  FILE *hw3log;
+  //FILE *hw3log;
+  char * inputfile;
+  
 }input_var;           //struct is shared by all threads
 
 //function to report CPU utilization metrics to a log file

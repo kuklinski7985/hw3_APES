@@ -8,10 +8,10 @@ void *metrics_fxn(void *param)
 {
   
   printf("metrics_fxn started\n\n");
-  input_var *in_struct;
-  in_struct = param;
-  printf("member1: %d\n", in_struct->member1);
-  printf("member2: %d\n", in_struct->member2);
+  //input_var *in_struct;
+  //in_struct = param;
+  //printf("member1: %d\n", in_struct->member1);
+  //printf("member2: %d\n", in_struct->member2);
 
   printf("metrics fxn ThreadID: %lu\n", pthread_self());
   return NULL;
