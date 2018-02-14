@@ -1,26 +1,38 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+//#include <sys/types.h>
+#include <unistd.h>
 #include "pthread_ex.h"
 
 pthread_t metrics, llsearch;
 pthread_attr_t attr;
 
+FILE *hw3log;
+
+
 
 int main(int argc, char *argv[])
 {
-
-  FILE *hw3log;
-
-  printf("shit broke\n");
+  time_t my_ctime = time(NULL);
+  struct tm tm = *localtime(&my_ctime);
   input_var * varstruct;
   varstruct = malloc(sizeof(varstruct));
   varstruct->inputfile = argv[1];
-  printf("good\n");
-  printf("input file name: %s\n",varstruct->inputfile);
-  //hw3log = fopen(main_copy->inputfile, "a+");
-  //fprintf(hw3log, "lets see if this works\n");
-  //fclose(hw3log);
+
+  hw3log = fopen(varstruct->inputfile, "a+");
+  if(hw3log == NULL)
+    {
+      printf("output file could not be accessed\n");
+      return 1;
+    }
+  fprintf(hw3log,"***main fxn thread starting***\n");
+  fprintf(hw3log,"%02d/%02d/%04d || %02d:%02d:%02d\n"
+	  ,tm.tm_mon+1,tm.tm_mday, tm.tm_year+1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
+  fprintf(hw3log,"main thread posixID: %lu\n", pthread_self());
+  fprintf(hw3log,"main thread linuxID: %d\n", getpid());
+
+  fclose(hw3log);
   
   /*main_copy->hw3log = argv[1];
   main_copy->hw3log = fopen(argv[1], "w");
@@ -58,6 +70,8 @@ int main(int argc, char *argv[])
   
   pthread_join(metrics, NULL);
   pthread_join(llsearch,NULL);*/
+
+  
   return 0;
 }
 
