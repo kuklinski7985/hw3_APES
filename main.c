@@ -16,7 +16,12 @@ int main(int argc, char *argv[])
 
   input_var *main_copy;
   //main_copy->hw3log = argv[1];
-  main_copy->hw3log = fopen(argv[1], "a+");
+  main_copy->hw3log = fopen(argv[1], "w");
+  if(main_copy->hw3log == NULL)
+    {
+      printf("shit broke");
+      return -1;
+    }
   //char * testing = "this is a test";
   //fprintf(hw3log, "%s", testing);
   fprintf(main_copy->hw3log, "**Main Thread Begin**\n");
