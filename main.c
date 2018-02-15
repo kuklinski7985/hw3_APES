@@ -3,6 +3,7 @@
 #include <stdlib.h>
 //#include <sys/types.h>
 #include <unistd.h>
+#include <sys/time.h>
 #include "pthread_ex.h"
 
 pthread_t metrics, llsearch;
@@ -10,12 +11,9 @@ pthread_attr_t attr;
 
 FILE *hw3log;
 
-
-
 int main(int argc, char *argv[])
 {
-  time_t my_ctime = time(NULL);
-  struct tm tm = *localtime(&my_ctime);
+  struct timeval my_timestamp;
   input_var * varstruct;
   varstruct = malloc(sizeof(varstruct));
   varstruct->inputfile = argv[1];
@@ -27,12 +25,12 @@ int main(int argc, char *argv[])
       return 1;
     }
   fprintf(hw3log,"***main fxn thread starting***\n");
-  fprintf(hw3log,"%02d/%02d/%04d || %02d:%02d:%02d\n"
-	  ,tm.tm_mon+1,tm.tm_mday, tm.tm_year+1900, tm.tm_hour, tm.tm_min, tm.tm_sec);
+  gettimeofday(&my_timestamp,NULL);
+  fprintf(hw3log,"timestamp: %ld.%ld\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
   fprintf(hw3log,"main thread posixID: %lu\n", pthread_self());
   fprintf(hw3log,"main thread linuxID: %d\n", getpid());
 
-  fclose(hw3log);
+  
   
   /*main_copy->hw3log = argv[1];
   main_copy->hw3log = fopen(argv[1], "w");
@@ -71,7 +69,10 @@ int main(int argc, char *argv[])
   pthread_join(metrics, NULL);
   pthread_join(llsearch,NULL);*/
 
-  
+  fprintf(hw3log,"***Main Thread Exit***\n");
+  gettimeofday(&my_timestamp,NULL);
+  fprintf(hw3log,"timestamp: %ld.%ld\n\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
+  fclose(hw3log);
   return 0;
 }
 
