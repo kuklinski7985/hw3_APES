@@ -7,14 +7,12 @@
 
 void *metrics_fxn(void *param)
 {
-  
-  printf("metrics_fxn started\n\n");
-  //input_var *in_struct;
-  //in_struct = param;
-  //printf("member1: %d\n", in_struct->member1);
-  //printf("member2: %d\n", in_struct->member2);
+  static FILE *hw3log1;
+  input_var * inner_struct = (input_var*) &param;
 
-  printf("metrics fxn ThreadID: %lu\n", pthread_self());
+  //inner_struct =(input_var*)malloc(sizeof(inner_struct));
+
+  printf("thread struct file name: %s\n\n",inner_struct->inputfile);
   return NULL;
 }
 

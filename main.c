@@ -9,14 +9,16 @@
 pthread_t metrics, llsearch;
 pthread_attr_t attr;
 
-FILE *hw3log;
+static FILE *hw3log;
 
 int main(int argc, char *argv[])
 {
   struct timeval my_timestamp;
   input_var * varstruct;
-  varstruct = malloc(sizeof(varstruct));
+  
+  varstruct = (input_var*)malloc(sizeof(varstruct));
   varstruct->inputfile = argv[1];
+  varstruct->member1 = 34;
 
   hw3log = fopen(varstruct->inputfile, "a+");
   if(hw3log == NULL)
@@ -29,50 +31,38 @@ int main(int argc, char *argv[])
   fprintf(hw3log,"timestamp: %ld.%ld\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
   fprintf(hw3log,"main thread posixID: %lu\n", pthread_self());
   fprintf(hw3log,"main thread linuxID: %d\n", getpid());
+  fclose(hw3log);
+
+  pthread_attr_init(&attr);
 
   
-  
-  /*main_copy->hw3log = argv[1];
-  main_copy->hw3log = fopen(argv[1], "w");
-  if(main_copy->hw3log == NULL)
-    {
-      printf("shit broke");
-      return -1;
-    }
-  char * testing = "this is a test";
-  fprintf(hw3log, "%s", testing);
-  fprintf(main_copy->hw3log, "**Main Thread Begin**\n");
-  fprintf(main_copy->hw3log, "POSIX Thread ID: %lu\n", pthread_self());
-  fprintf(main_copy->hw3log, "Linux Thread ID: %d\n", getpid());
-  fclose(main_copy->hw3log);*/
-  
-  /* pthread_attr_init(&attr);
-  input_var m_thread, ll_thread;
-  m_thread.member1 = 31;
-  m_thread.member2 = 89;
+  //m_thread.member1 = 31;
+  //m_thread.member2 = 89;
   
   int checking;
-  checking = pthread_create(&metrics, &attr, metrics_fxn, (void*)&m_thread);
+  checking = pthread_create(&metrics, &attr, metrics_fxn, (void*)&varstruct);
   if(checking)
     {
       fprintf(stderr, "error creating metrics thread");
       return -1;
     }
 
-  checking = pthread_create(&llsearch, &attr, llsearch_fxn, (void*)&ll_thread);
+  /* checking = pthread_create(&llsearch, &attr, llsearch_fxn, (void*)&ll_thread);
   if(checking)
     {
       fprintf(stderr, "error creating metrics thread");
       return -1;
-    }
+      }*/
   
   pthread_join(metrics, NULL);
-  pthread_join(llsearch,NULL);*/
+  //pthread_join(llsearch,NULL);
 
+  hw3log = fopen(varstruct->inputfile, "a+");
   fprintf(hw3log,"***Main Thread Exit***\n");
   gettimeofday(&my_timestamp,NULL);
   fprintf(hw3log,"timestamp: %ld.%ld\n\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
   fclose(hw3log);
+  free(varstruct);
   return 0;
 }
 
