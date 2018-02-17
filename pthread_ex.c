@@ -7,6 +7,7 @@
 #include "pthread_ex.h"
   
 extern int bizzounce;
+extern input_var *varstruct;
 
 void *metrics_fxn(void *param)
 {
@@ -22,7 +23,7 @@ void *metrics_fxn(void *param)
       return (void*)1;
     }
 
-  fprintf(hw3log1,"******************Metrics Fxn thread starting*****************\n");
+  fprintf(hw3log1,"******************Metrics Fxn thread ENTER*********************\n");
   gettimeofday(&my_timestamp,NULL);
   fprintf(hw3log1,"timestamp in sec: %ld.%ld\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
   fprintf(hw3log1,"metrics thread posixID: %lu\n", pthread_self());
@@ -34,9 +35,15 @@ void *metrics_fxn(void *param)
   signal(SIGUSR1, metric_exit);
   unsigned long long int delay_time = 100000000;  //in nanoseconds
   metric_counter_init(delay_time);
-  cpustats = fopen("/proc/stat", "r");
   while(bizzounce == 0);
-  fclose(cpustats);
+
+  hw3log1 = fopen(inner_struct->inputfile,"a+");
+
+  fprintf(hw3log1,"******************Metrics Fxn thread EXIT**********************\n");
+  gettimeofday(&my_timestamp,NULL);
+  fprintf(hw3log1,"timestamp in sec: %ld.%ld\n\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
+
+  fclose(hw3log1);
 }
 
 
@@ -55,14 +62,13 @@ void *llsearch_fxn(void *param)
       return (void*)1;
     }
 
-  fprintf(hw3log2,"******************Linked List Fxn Thread Starting*****************\n");
+  fprintf(hw3log2,"******************Linked List Fxn Thread ENTER*****************\n");
   gettimeofday(&my_timestamp,NULL);
   fprintf(hw3log2,"timestamp in sec: %ld.%ld\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
   fprintf(hw3log2,"metrics thread posixID: %lu\n", pthread_self());
   fprintf(hw3log2,"metrics thread linuxID: %d\n\n", getpid());
 
-
-  //do linked list sorting stuff here.
+  
 
 
   
@@ -71,6 +77,12 @@ void *llsearch_fxn(void *param)
   signal(SIGUSR2, search_exit);
   while(bizzounce == 0);
 
+  hw3log2 = fopen(llthread_struct->inputfile,"a+");
+  fprintf(hw3log2,"******************Linked List Fxn Thread EXIT*****************\n");
+  gettimeofday(&my_timestamp,NULL);
+  fprintf(hw3log2,"timestamp in sec: %ld.%ld\n\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
+
+  fclose(hw3log2);
 }
 
 void metric_exit(int signum)
@@ -87,18 +99,47 @@ void search_exit(int signum)
 
 void handler_timer(union sigval arg)
 {
-  //static int counter = 0;
-  //counter++;
-  //printf("timer going off: %d\n",counter);
-  while(fscanf(cpustats
   
+  pthread_mutex_lock(&locking);
+  FILE *hw3log4, *cpustat;
+
+  hw3log4 = fopen(varstruct->inputfile, "a+");
+
+  if(hw3log4 == NULL)
+    {
+      printf("problem with open log file\n");
+      return;
+    }
+  
+  cpustat = fopen("/proc/stat", "r");
+  if(cpustat == NULL)
+    {
+      printf("problem with open CPU file\n");
+      return;
+    }
+
+  char cpu_char = fgetc(cpustat);
+  while(cpu_char != EOF)
+    {
+      fputc(cpu_char, hw3log4);
+      cpu_char = fgetc(cpustat);
+    }
+  
+  pthread_mutex_unlock(&locking);
+  fclose(hw3log4);
+  fclose(cpustat);
 }
 
-void metric_counter_init(unsigned long long int firedelay)     //firedelay is number of nanoseconds
+
+ //firedelay is number of nanoseconds
+void metric_counter_init(unsigned long long int firedelay)    
 {
   timer_t timer;
-  struct itimerspec timer_interval;    //sets values for timer interval and initial expiration
-  struct sigevent timer_actions;       //descibe the way a process is to be notified about and event
+  //sets values for timer interval and initial expiration
+  struct itimerspec timer_interval;
+
+  //descibe the way a process is to be notified about and event
+  struct sigevent timer_actions;       
   
   timer_actions.sigev_notify = SIGEV_THREAD;
   timer_actions.sigev_value.sival_ptr = &timer;

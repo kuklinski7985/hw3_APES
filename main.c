@@ -10,11 +10,11 @@ pthread_t metrics, llsearch;
 pthread_attr_t attr;
 
 static FILE *hw3log;
-static FILE *cpustats;
 
 pthread_mutex_t locking;
 
 int bizzounce=0;
+input_var * varstruct;
 
 int main(int argc, char *argv[])
 {
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
       return 1;
     }
   
-  input_var * varstruct;
+  //input_var * varstruct;
   
   varstruct = (input_var*)malloc(sizeof(varstruct));
   varstruct->inputfile = argv[1];
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
       printf("output file could not be accessed\n");
       return 1;
     }
-  fprintf(hw3log,"******************main fxn thread starting*****************\n");
+  fprintf(hw3log,"******************main fxn thread ENTER*****************\n");
   gettimeofday(&my_timestamp,NULL);
   fprintf(hw3log,"timestamp: %ld.%ld\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
   fprintf(hw3log,"main thread posixID: %lu\n", pthread_self());
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
   pthread_mutex_destroy(&locking);
 
   hw3log = fopen(varstruct->inputfile, "a+");
-  fprintf(hw3log,"*****************Main Thread Exit*****************\n");
+  fprintf(hw3log,"*****************Main Thread Exit***************************\n");
   gettimeofday(&my_timestamp,NULL);
   fprintf(hw3log,"timestamp: %ld.%ld\n\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
   fclose(hw3log);
