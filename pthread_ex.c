@@ -95,10 +95,9 @@ void *llsearch_fxn(void *param)
   data_wrap->count = 1;
   //printf("addr of node: %p | data: %d | count: %d\n", llnode, (data_wrap->data),(data_wrap->count));
 
-  int flag;
   while(valchar != EOF)
     {
-      flag = 0;
+      int flag = 0;
       valchar = fgetc(valentines);
       printf("got char: %c\n",valchar);
       while(flag == 0)
@@ -109,10 +108,10 @@ void *llsearch_fxn(void *param)
 	      flag = 1;
 	      printf("matched\n");
 	    }
-	  else
-	    {
-	      if(llnode->next == NULL)
-		{
+	  else if((llnode->next) == NULL)
+	  {
+	    //if(llnode->next == NULL)
+	    //{
 		  llnode = insert_at_end(llnode,valchar);
 		  data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
 		  (data_wrap->count)++;
@@ -121,11 +120,11 @@ void *llsearch_fxn(void *param)
 		}
 	      else
 		{
-		  llnode = llnode->next;
+		  llnode = (llnode->next);
 		  //printf("traverse\n");
 		}
-	    }
-	}
+	      }
+      //}
       	llnode = firstnodeaddr;
 	data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
 	printf("reset\n\n");
