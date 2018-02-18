@@ -18,7 +18,8 @@ typedef struct llnode_t{
 }llnode_t;
 
 typedef struct lldata_t{
-  uint32_t data;
+  char data;
+  uint32_t count;
   llnode_t linker;
 }lldata_t;
 
@@ -26,7 +27,7 @@ llnode_t* destroy(llnode_t * node);
 
 llnode_t* insert_at_begin(llnode_t * node, uint32_t info);
 
-llnode_t* insert_at_end(llnode_t * node, uint32_t info);
+llnode_t* insert_at_end(llnode_t * node, char info);
 
 llnode_t* insert_at_position(llnode_t * node, uint32_t info, uint32_t index);
 

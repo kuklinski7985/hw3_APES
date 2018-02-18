@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/time.h>
 #include <signal.h>
 #include "pthread_ex.h"
+#include "link_list.h"
   
 extern int bizzounce;
 extern input_var *varstruct;
@@ -67,15 +69,74 @@ void *llsearch_fxn(void *param)
   fprintf(hw3log2,"timestamp in sec: %ld.%ld\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
   fprintf(hw3log2,"metrics thread posixID: %lu\n", pthread_self());
   fprintf(hw3log2,"metrics thread linuxID: %d\n\n", getpid());
-
-  
-
-
-  
   fclose(hw3log2);
   pthread_mutex_unlock(&locking);
+
+  llnode_t * llnode;
+  llnode_t * firstnodeaddr;
+  lldata_t * data_wrap;
+  FILE * valentines;
+  char valchar;
+  uint32_t char_count;
+
+  valentines = fopen("valentinesday_testing.txt","r");
+  if(valentines == NULL)
+    {
+      printf("cannot open valentinesday.txt\n");
+      return (void*)1;
+    }
+
+  valchar = fgetc(valentines);
+  printf("got char: %c\n",valchar);
+  
+  llnode = insert_at_end(NULL, valchar);    //llist contains the start point of the linked list
+  firstnodeaddr = llnode;
+  data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
+  data_wrap->count = 1;
+  //printf("addr of node: %p | data: %d | count: %d\n", llnode, (data_wrap->data),(data_wrap->count));
+
+  int flag;
+  while(valchar != EOF)
+    {
+      flag = 0;
+      valchar = fgetc(valentines);
+      printf("got char: %c\n",valchar);
+      while(flag == 0)
+	{
+	  if(valchar == (data_wrap->data))
+	    {
+	      (data_wrap->count)++;
+	      flag = 1;
+	      printf("matched\n");
+	    }
+	  else
+	    {
+	      if(llnode->next == NULL)
+		{
+		  llnode = insert_at_end(llnode,valchar);
+		  data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
+		  (data_wrap->count)++;
+		  flag = 1;
+		  printf("new node\n");
+		}
+	      else
+		{
+		  llnode = llnode->next;
+		  //printf("traverse\n");
+		}
+	    }
+	}
+      	llnode = firstnodeaddr;
+	data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
+	printf("reset\n\n");
+    }
+  fclose(valentines);
+  
+  uint32_t ll_size = size(firstnodeaddr);
+  printf("size of linked list %d\n",ll_size);
+
   signal(SIGUSR2, search_exit);
-  while(bizzounce == 0);
+  //while(bizzounce == 0);
 
   hw3log2 = fopen(llthread_struct->inputfile,"a+");
   fprintf(hw3log2,"******************Linked List Fxn Thread EXIT*****************\n");

@@ -29,13 +29,13 @@ llnode_t* insert_at_begin(llnode_t * node, uint32_t info)
   return &(newcontainer->linker);
 }
 
-llnode_t* insert_at_end(llnode_t * node, uint32_t info)
+llnode_t* insert_at_end(llnode_t * node, char info)
 {
   lldata_t * newcontainer;
   newcontainer = (lldata_t*)malloc(sizeof(lldata_t));
   if(newcontainer == NULL)
     return NULL;
-  
+  //condition to start a new linked list
   if(node == NULL)
     {
       ((newcontainer->linker).prev) = NULL;
@@ -48,6 +48,7 @@ llnode_t* insert_at_end(llnode_t * node, uint32_t info)
   distance = size(node);
   ((newcontainer->linker).prev) = node+distance;
   ((newcontainer->linker).next) = NULL;
+  node->next += distance;
   node->next = &(newcontainer->linker);
   newcontainer->data = info;
   return node;
@@ -72,12 +73,11 @@ uint32_t size(llnode_t * node)
       return count;
     }
 
-  llnode_t* travel;
-  travel = node->next;
-  while (travel != NULL)
+  llnode_t *travel = node;
+  while(travel != NULL)
     {
-      travel = travel->next;
       count++;
+      travel = travel->next;
     }
   return count;
 }
@@ -88,7 +88,8 @@ uint32_t size(llnode_t * node)
 }llnode_t;
 
 typedef struct lldata_t{
+  char data;
+  uint32_t count;
   llnode_t linker;
-  uint32_t data;
 }lldata_t;
 */
