@@ -1,3 +1,12 @@
+/**
+* @file pthread_ex.h
+* @brief function definitions for threading example in hw3
+* @author Andrew Kuklinski
+* @date 02/18/2018
+**/
+
+
+
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>

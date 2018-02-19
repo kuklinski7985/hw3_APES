@@ -1,3 +1,12 @@
+/**
+* @file link_list.c
+* @brief function definitions for implementing a double linked list with
+*        independant data and node structures
+* @author Andrew Kuklinski
+* @date 02/18/2018
+**/
+
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -57,13 +66,6 @@ llnode_t* insert_at_end(llnode_t * node, char info)
   ((newcontainer->linker).prev) = node;
   newcontainer->data = info;
   newcontainer->count = 0;
-  /*uint32_t distance;
-  distance = size(node);
-  ((newcontainer->linker).prev) = node+distance;
-  ((newcontainer->linker).next) = NULL;
-  node->next += distance;
-  node->next = &(newcontainer->linker);
-  newcontainer->data = info;*/
   return startingnode;
   
 }

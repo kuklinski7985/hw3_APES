@@ -1,3 +1,11 @@
+/**
+* @file link_list.
+* @brief function prototypes and struction definitions for doubly linked list
+* @author Andrew Kuklinski
+* @date 02/18/2018
+**/
+
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>

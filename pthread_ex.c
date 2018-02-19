@@ -1,3 +1,11 @@
+/**
+* @file pthread_ex.c
+* @brief function definitions for hw3: threading, singal handlers,
+*        and posix timers
+* @author Andrew Kuklinski
+* @date 02/18/2018
+**/
+
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
