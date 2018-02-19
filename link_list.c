@@ -41,17 +41,30 @@ llnode_t* insert_at_end(llnode_t * node, char info)
       ((newcontainer->linker).prev) = NULL;
       ((newcontainer->linker).next) = NULL;
       newcontainer->data = info;
+      newcontainer->count = 0;
       return &(newcontainer->linker);
     }
 
-  uint32_t distance;
+  llnode_t * startingnode;
+  startingnode = node;
+  while(node->next != NULL)
+    {
+      node = node->next;
+    }
+
+  node->next = &(newcontainer->linker);
+  ((newcontainer->linker).next) = NULL;
+  ((newcontainer->linker).prev) = node;
+  newcontainer->data = info;
+  newcontainer->count = 0;
+  /*uint32_t distance;
   distance = size(node);
   ((newcontainer->linker).prev) = node+distance;
   ((newcontainer->linker).next) = NULL;
   node->next += distance;
   node->next = &(newcontainer->linker);
-  newcontainer->data = info;
-  return node;
+  newcontainer->data = info;*/
+  return startingnode;
   
 }
 
@@ -76,6 +89,7 @@ uint32_t size(llnode_t * node)
   llnode_t *travel = node;
   while(travel != NULL)
     {
+      
       count++;
       travel = travel->next;
     }

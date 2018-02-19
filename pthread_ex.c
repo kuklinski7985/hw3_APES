@@ -79,7 +79,9 @@ void *llsearch_fxn(void *param)
   char valchar;
   uint32_t char_count;
 
-  valentines = fopen("valentinesday_testing.txt","r");
+  //valentines = fopen("valentinesday_testing.txt","r");
+  valentines = fopen("valentinesday.txt","r");
+
   if(valentines == NULL)
     {
       printf("cannot open valentinesday.txt\n");
@@ -87,55 +89,60 @@ void *llsearch_fxn(void *param)
     }
 
   valchar = fgetc(valentines);
-  printf("got char: %c\n",valchar);
   
-  llnode = insert_at_end(NULL, valchar);    //llist contains the start point of the linked list
+  llnode = insert_at_end(NULL, valchar);    //llnode contains the start point of the linked list
   firstnodeaddr = llnode;
   data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
   data_wrap->count = 1;
-  //printf("addr of node: %p | data: %d | count: %d\n", llnode, (data_wrap->data),(data_wrap->count));
 
+  int flag =0;
   while(valchar != EOF)
     {
-      int flag = 0;
+      flag = 0;
       valchar = fgetc(valentines);
-      printf("got char: %c\n",valchar);
-      while(flag == 0)
+      
+      while((llnode->next) != NULL)
 	{
-	  if(valchar == (data_wrap->data))
+	  if(valchar == (data_wrap-> data))
 	    {
 	      (data_wrap->count)++;
 	      flag = 1;
-	      printf("matched\n");
 	    }
-	  else if((llnode->next) == NULL)
-	  {
-	    //if(llnode->next == NULL)
-	    //{
-		  llnode = insert_at_end(llnode,valchar);
-		  data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
-		  (data_wrap->count)++;
-		  flag = 1;
-		  printf("new node\n");
-		}
-	      else
-		{
-		  llnode = (llnode->next);
-		  //printf("traverse\n");
-		}
-	      }
-      //}
-      	llnode = firstnodeaddr;
-	data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
-	printf("reset\n\n");
+	  llnode = llnode->next;
+	  data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
+
+	}
+
+      if(flag == 0)    //no match was found and a new node is necessary
+	{
+	  llnode = insert_at_end(firstnodeaddr,valchar);
+	  while((llnode->next) != NULL)
+	    {
+	      llnode = llnode->next;
+	    }
+	  data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
+	  (data_wrap->count)++;
+	}
+
+       llnode = firstnodeaddr;
+       data_wrap = GET_LIST_CONTAINER(llnode,lldata_t,linker);
+
     }
   fclose(valentines);
   
-  uint32_t ll_size = size(firstnodeaddr);
-  printf("size of linked list %d\n",ll_size);
+  //uint32_t ll_size = size(firstnodeaddr);
+  //printf("size of linked list %d\n",ll_size);
 
-  signal(SIGUSR2, search_exit);
-  //while(bizzounce == 0);
+  printf("\nThese nodes contain the characters with only 3 occurances\n\n");
+  while((firstnodeaddr->next) != NULL)
+    {
+      data_wrap = GET_LIST_CONTAINER(firstnodeaddr,lldata_t,linker);
+      if((data_wrap->count) == 3)
+	{
+	  printf("addr of node: %p | data: %c | count: %d\n", firstnodeaddr, (data_wrap->data),(data_wrap->count));
+	}
+      firstnodeaddr = firstnodeaddr->next;
+    }
 
   hw3log2 = fopen(llthread_struct->inputfile,"a+");
   fprintf(hw3log2,"******************Linked List Fxn Thread EXIT*****************\n");
@@ -143,6 +150,7 @@ void *llsearch_fxn(void *param)
   fprintf(hw3log2,"timestamp in sec: %ld.%ld\n\n",my_timestamp.tv_sec, my_timestamp.tv_usec);
 
   fclose(hw3log2);
+
 }
 
 void metric_exit(int signum)
